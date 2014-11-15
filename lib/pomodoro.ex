@@ -1,4 +1,5 @@
 defmodule Pomodoro do
+  @write_interval 5
   def start do
     _timer(elem(:erlang.now, 1), 0)
   end
@@ -9,17 +10,9 @@ defmodule Pomodoro do
       {:wut, pid} -> IO.puts "wut"
 
       after 250 ->
-      elapsed_minutes = get_elapsed_minutes(start_seconds)
-  
-      cond do
-        elapsed_minutes > current_minutes and rem(elapsed_minutes, 5) == 0 ->
-          IO.write "[#{elapsed_minutes}] "
-        elapsed_minutes > current_minutes ->
-          IO.write "."
-        true -> n = 42
-      end
-
-      _timer(start_seconds, elapsed_minutes)
+        elapsed_minutes = get_elapsed_minutes(start_seconds)
+        if (elapsed_minutes > current_minutes), do: write_to_screen(elapsed_minutes)
+        _timer(start_seconds, elapsed_minutes)
     end
 
   end
@@ -27,6 +20,15 @@ defmodule Pomodoro do
   defp get_elapsed_minutes(start_seconds) do
     now_seconds = elem(:erlang.now, 1)
     elapsed_seconds = now_seconds - start_seconds
-    elapsed_minutes = round Float.floor(elapsed_seconds / 60)
+    elapsed_minutes = round Float.floor(elapsed_seconds / @write_interval)
   end
+
+  defp write_to_screen(elapsed_minutes) do
+    if (rem(elapsed_minutes, 5) == 0) do
+      IO.write "[#{elapsed_minutes}] "
+    else
+      IO.write "."
+    end
+  end
+
 end
