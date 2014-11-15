@@ -9,25 +9,22 @@ defmodule Pomodoro do
       {:wut, pid} -> IO.puts "wut"
 
       after 250 ->
-      elapsed_minutes = get_elapsed_minutes
+      elapsed_minutes = get_elapsed_minutes(start_seconds)
   
-      case elapsed_minutes > current_minutes do
-        true when rem(elapsed_minutes, 5) == 0 ->
+      cond do
+        elapsed_minutes > current_minutes and rem(elapsed_minutes, 5) == 0 ->
           IO.write "[#{elapsed_minutes}] "
-          _timer(start_seconds, elapsed_minutes)
-        true -> 
+        elapsed_minutes > current_minutes ->
           IO.write "."
-          _timer(start_seconds, elapsed_minutes)
-        false -> _timer(start_seconds, elapsed_minutes)
+        true -> n = 42
       end
 
-      _timer(start_seconds, current_minutes)
-
+      _timer(start_seconds, elapsed_minutes)
     end
 
   end
 
-  defp get_elapsed_minutes do
+  defp get_elapsed_minutes(start_seconds) do
     now_seconds = elem(:erlang.now, 1)
     elapsed_seconds = now_seconds - start_seconds
     elapsed_minutes = round Float.floor(elapsed_seconds / 60)
