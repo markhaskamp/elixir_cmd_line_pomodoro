@@ -8,7 +8,11 @@ defmodule Command do
     line = IO.gets("[P]omodoro, [S]top, [Q]uit: ")
 
     cmd = String.downcase(String.first(line))
-    send(:global.whereis_name(PomoRcvLoop), {cmd, "eddie would go"})
+    label = ""
+    if (cmd == "p") do
+      label = IO.gets("doing what? ")
+    end
+    send(:global.whereis_name(PomoRcvLoop), {cmd, String.strip(label)})
 
     read_line
   end
