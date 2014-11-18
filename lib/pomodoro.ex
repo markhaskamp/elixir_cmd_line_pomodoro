@@ -1,5 +1,5 @@
 defmodule Pomodoro do
-  @write_interval 5
+  @write_interval 3
 
   def start do
     pid = spawn(__MODULE__, :receive_loop, [])
@@ -16,12 +16,10 @@ defmodule Pomodoro do
 
       {"s", label} ->
         IO.puts "Stop!"
+        Agent.update(PomoState, fn(s) -> {elem(:erlang.now, 1), 0, :s} end)
 
       {"q", label} ->
         IO.puts "quit!"
-
-      _            -> 
-        IO.puts "uhh, wut"
 
       after 3000 ->
         {start_seconds, current_minutes, state} = Agent.get(PomoState, fn(s) -> s end)
